@@ -1,6 +1,6 @@
 {
-  "name": "json-ref-lite",
-  "version": "1.0.73",
+  "name": "json-ref",
+  "version": "1.0.0",
   "description":"Extremely light weight way to resolve jsonschema '$ref' references & inheritance: create circular/graphs, fractals from json (browser/coffeescript/javascript).",
   "main": "index.js",
   "dependencies": {
@@ -13,12 +13,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://coderofsalvation@github.com/coderofsalvation/json-ref-lite.git"
+    "url": "https://github.com/cuongurus/json-ref.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/coderofsalvation/json-ref-lite/issues"
+    "url": "https://github.com/cuongurus/json-ref/issues"
   },
   "browser": {
     "sync-request": false,
@@ -38,5 +38,5 @@
     "circular",
     "graph"
   ],
-  "homepage": "https://github.com/coderofsalvation/json-ref-lite"
+  "homepage": "https://github.com/cuongurus/json-ref"
 }

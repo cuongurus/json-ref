@@ -8,12 +8,7 @@ Stop processing json tree-structures, think json references and extentions.
 
 nodejs:
 
-    jref = require('json-ref-lite')
-
-or in the browser:
-
-    <script type="text/javascript" src="json-ref-lite.min.js"></script>
-    jref = require('json-ref-lite');
+    jref = require('json-ref')
 
 For example here's how to do a multidirected graph:
 

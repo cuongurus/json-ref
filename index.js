@@ -13,6 +13,7 @@
     this.extendtoken = '$extend';
     this.reftoken = '$ref';
     this.pathtoken = "#";
+    this.resolvetoken = '$res';
     this.debug = false;
     this.clone = function(obj) {
       var key, temp;
@@ -76,39 +77,36 @@
           if (this.debug && typeof ref === 'string') {
             console.log("checking " + k + " -> " + ref);
           }
-          if (Object.keys(v).length > 1) {
-            console.error("json-ref-lite error: object '" + k + "' contains reference as well as other properties..ignoring properties");
-          }
           if (Array.isArray(ref)) {
             ref = this.replace(ref, ids, root);
           } else if (ids[ref] != null) {
-            json[k] = ids[ref];
+            json[k][this.resolvetoken] = ids[ref];
           } else if (request && String(ref).match(/^https?:/)) {
             url = ref.match(/^[^#]*/);
             if (!this.cache[url]) {
               this.cache[url] = this.resolve(JSON.parse(request("GET", url).getBody().toString()));
             }
-            json[k] = this.cache[url];
+            json[k][this.resolvetoken] = this.cache[url];
             if (ref.match(this.pathtoken)) {
               jsonpointer = ref.replace(new RegExp(".*" + pathtoken), this.pathtoken);
               if (jsonpointer.length) {
-                json[k] = this.get_json_pointer(jsonpointer, json[k]);
+                json[k][this.resolvetoken] = this.get_json_pointer(jsonpointer, json[k]);
               }
             }
           } else if (fs && fs.existsSync(ref)) {
             str = fs.readFileSync(ref).toString();
             if (str.match(/module\.exports/)) {
-              json[k] = this.resolve(require(ref));
+              json[k][this.resolvetoken] = this.resolve(require(ref));
             } else {
-              json[k] = this.resolve(JSON.parse(str));
+              json[k][this.resolvetoken] = this.resolve(JSON.parse(str));
             }
           } else if (String(ref).match(new RegExp('^' + this.pathtoken))) {
             if (this.debug) {
               console.log("checking " + ref + " pathtoken");
             }
-            json[k] = this.get_json_pointer(ref, root);
+            json[k][this.resolvetoken] = this.get_json_pointer(ref, root);
           }
-          if ((((ref1 = json[k]) != null ? ref1.length : void 0) != null) && ((ref2 = json[k]) != null ? ref2.length : void 0) === 0 && this.debug) {
+          if ((((ref1 = json[k][this.resolvetoken]) != null ? ref1.length : void 0) != null) && ((ref2 = json[k][this.resolvetoken]) != null ? ref2.length : void 0) === 0 && this.debug) {
             results.push(console.log(ref + " reference not found"));
           } else {
             results.push(void 0);

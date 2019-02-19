@@ -8,7 +8,7 @@ Stop processing json tree-structures, think json references and extentions.
 
 nodejs:
 
-    jref = require('json-ref')
+    jref = require('json-ref-parser')
 
 # Rule of thumb
 

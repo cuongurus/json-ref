@@ -1,5 +1,5 @@
 {
-  "name": "json-ref",
+  "name": "json-ref-parser",
   "version": "1.0.0",
   "description":"Extremely light weight way to resolve jsonschema '$ref' references & inheritance: create circular/graphs, fractals from json (browser/coffeescript/javascript).",
   "main": "index.js",
@@ -7,18 +7,17 @@
     "property-expr": "^1.3.1"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "coffee test/test.coffee > test/test.now ; diff --brief test/test.now test/test.out && echo 'test OK' || exit 1",
-    "browser": "/bin/bash -c 'coffee -c *.coffee test/*.coffee && browserify -r .:json-ref-lite | uglifyjs -o json-ref-lite.min.js'"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/cuongurus/json-ref.git"
+    "url": "https://github.com/cuongurus/json-ref-parser.git"
   },
-  "author": "",
+  "author": {
+    "name": "cuongurus",
+    "email": "cuongnd95@live.com"
+  },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cuongurus/json-ref/issues"
+    "url": "https://github.com/cuongurus/json-ref-parser/issues"
   },
   "browser": {
     "sync-request": false,
@@ -38,5 +37,5 @@
     "circular",
     "graph"
   ],
-  "homepage": "https://github.com/cuongurus/json-ref"
+  "homepage": "https://github.com/cuongurus/json-ref-parser"
 }

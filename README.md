@@ -10,53 +10,6 @@ nodejs:
 
     jref = require('json-ref')
 
-For example here's how to do a multidirected graph:
-
-      json = {
-        "a": { "$ref": [{"$ref":"#/b"}]           },
-        "b": { "$ref": [{"$ref": [{"$ref":"#/a"}] }
-      }
-      console.dir(jref.resolve(json));
-
-outputs:
-
-      { a: { '$ref': [ { '$ref': [ [Circular] ] } ] },
-        b: { '$ref': [ { '$ref': [ [Circular] ] } ] } }
-
-> NOTE #1: for flowprogramming with json-ref-lite see [jsongraph](https://npmjs.org/packages/jsongraph)
-> NOTE #2: for converting a restful service to server/client graph see [ohmygraph](https://npmjs.org/packages/ohmygraph)
-
-# Resolve Jsonschema v1/2/3 references
-
-json-ref-lite resolves newer, older jsonschema reference notations, as well as simple dotstyle:
-
-    json = {
-      foo: {
-        id: 'foobar',
-        value: 'bar'
-      },
-      old: { '$ref': 'foobar'      }
-      new: { '$ref': '#/foo/id'    }
-      dotstyle: { '$ref': '#foo.id' } 
-    };
-
-    console.dir(jref.resolve(json));
-
-Outputs:
-
-    { 
-      foo: { id: 'foobar', value: 'bar' },
-      old: { value: 'bar' },
-      new: 'foobar',
-      dotstyle: 'foobar',
-    }
-
-# Why?
-
-Because dont-repeat-yourself (DRY)! 
-It is extremely useful to use '$ref' keys in jsonschema graphs.
-Instead of writing manual REST-api gluecode, you can build a restgraph client & server.
-
 # Rule of thumb
 
 When referencing to keys, always use underscores. Not doing this will not resolve references correctly.
@@ -84,6 +37,7 @@ Developer tools:
 |redefine ref token                                   | `jref.reftoken = '@ref'`                                               |
 |redefine extend token                                | `jref.extendtoken = '@extend'`                                         |
 |redefine jsonpointer starttoken                      | `jref.pathtoken = '#'`                                                 |
+|redefine resolve tokens                              | `jref.resolvetoken = '@res'`
 
 > NOTE: re-defining tokens is useful to prevent resolving only certain references. A possible rule of thumb could be to have '$ref' references for serverside, and '@ref' references for clientside when resolving the same jsondata.
 
@@ -101,9 +55,11 @@ Developer tools:
 
 outputs:
 
-    { 
+    {
       foo: { id: 'foobar', value: 'bar' },
-      example: { value: 'bar' } 
+      example: {
+        '$ref': 'foobar',
+        '$res': { value: 'bar' }
     }
 
 ## Example: jsonpointers
@@ -128,7 +84,10 @@ outputs:
         foo: 'flop'
       },
       example: {
-        ids: 'flop' 
+        ids: {
+          '$ref': '#/foo/foo',
+          '$res': 'flop'
+        }
       }
     }
 
@@ -170,10 +129,13 @@ outputs:
 
     {
       "bar": ["one","two"],
-      "foo": "two"
+      "foo": {
+        "$ref": "#/bar[1]",
+        '$res': "two"
+      }
     }
 
-## Example: evaluating functions 
+## Example: evaluating functions
 
 Ofcoarse functions fall outside the json scope, but they can be executed after
 binding them to the json.
@@ -187,88 +149,8 @@ binding them to the json.
 outputs:
 
     {
-      "bar": "Hello World"
-    }
-
-
-## Example: Graphs / Circular structures
-
-Json-ref allows you to build circular/flow structures.
-
-    {
-      "a": { "$ref": [{"$ref":"#/b"}] },
-      "b": { "$ref": [{"$ref":"#/a"}] },
-      "c": { "$ref": [{"$ref":"#/a"}] }
-    }
-
-This resembles the following graph: b<->a<-c
-
-See superminimalistic dataflow programming example here [JS](/test/flowprogramming.js) / [CS](/test/flowprogramming.coffee)
-
-> HINT: But hey, since you're reading this, why not use [jsongraph](https://npmjs.org/packages/jsongraph) instead?
-
-## Example: json inheritance / extensions
-
-The "$extend" key is an easy way to inherit/extend existing objects.
-It's like `patch` for json.
-
-    json = {
-      "a": {
-        "foo": {
-          "bar": { "title": "foo" }
+      "bar": {
+        "$ref": "#/foo()",
+        '$res': "Hello World"
         }
-      },
-      "$extend": {
-        "$ref": "#a.foo.bar",
-        "location": "skyscraper",
-        "sex": "male"
-      }
     }
-    jref.extend(json);
-
-output:
-
-    {
-      "a": {
-        "foo": {
-          "bar": {
-            "title": "foo",
-            "location": "skyscraper",
-            "sex": "male"
-          }
-        }
-      }
-    }
-
-## Example: evaluating data into graph
-
-Process graph-values into strings:
-
-    data = 
-      boss: {name:"John"}
-      employee: {name:"Matt"}
-
-    template = jref.resolve 
-      boss:
-        name: "{boss.name}"
-      employee:
-        name: "{#/employee/name}"
-      names: [{"$ref":"#/boss/name"},{"$ref":"#/employee/name"}]
-
-    graph = jref.evaluate template, data # !!! (k,v) -> return v
-
-    console.log JSON.stringify graph, null, 2
-
-> Note #1: you can override the evaluator with your own by adding a function as third argument. See the '!!' comment 
-> Note #2: both jsonpointer notation `foo_{#/a/graph/value}` as well as dot-notation is allowed `foo_{a.graph.value}`
-
-## Example: restgraph using jsonschema
-
-CRUD operations in server/client without dealing with the underlying rest interface?
-See the [ohmygraph](https://npmjs.org/packages/ohmygraph) module.
-
-# Philosophy
-
-* This is a zero-dependency module.
-* isomorphic is cool
-* pistachio icecream is nice

@@ -121,31 +121,31 @@
       }
       return results;
     };
-    this.extend = function(json) {
-      var k, ref, results, rk, rv, v;
-      if (typeof json === 'object') {
-        results = [];
-        for (k in json) {
-          v = json[k];
-          if (k === this.extendtoken && (v[this.reftoken] != null)) {
-            ref = this.get_json_pointer(v[this.reftoken], json);
-            for (rk in v) {
-              rv = v[rk];
-              if (rk !== this.reftoken) {
-                ref[rk] = rv;
-              }
-            }
-            delete json[k];
-          }
-          if (typeof v === 'object') {
-            results.push(v = this.extend(v));
-          } else {
-            results.push(void 0);
-          }
-        }
-        return results;
-      }
-    };
+    // this.extend = function(json) {
+    //   var k, ref, results, rk, rv, v;
+    //   if (typeof json === 'object') {
+    //     results = [];
+    //     for (k in json) {
+    //       v = json[k];
+    //       if (k === this.extendtoken && (v[this.reftoken] != null)) {
+    //         ref = this.get_json_pointer(v[this.reftoken], json);
+    //         for (rk in v) {
+    //           rv = v[rk];
+    //           if (rk !== this.reftoken) {
+    //             ref[rk] = rv;
+    //           }
+    //         }
+    //         delete json[k];
+    //       }
+    //       if (typeof v === 'object') {
+    //         results.push(v = this.extend(v));
+    //       } else {
+    //         results.push(void 0);
+    //       }
+    //     }
+    //     return results;
+    //   }
+    // };
     this.resolve = function(json) {
       var ids;
       ids = {};
